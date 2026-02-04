@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>¿Mi San Valentín? 💘</title>
+  <style>
+    :root{
+      --bg:#0b1020; --card:#121a33; --text:#e9ecff; --muted:#aab1da;
+      --accent:#ff4d8d; --accent2:#7c5cff;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; display:grid; place-items:center;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background: radial-gradient(1200px 800px at 20% 20%, rgba(255,77,141,.25), transparent 55%),
+                  radial-gradient(1000px 700px at 80% 30%, rgba(124,92,255,.25), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      overflow:hidden;
+    }
+    .card{
+      width:min(720px, 92vw);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:22px;
+      padding:24px 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      position:relative;
+    }
+    .tag{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:8px 12px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(18,26,51,.55);
+      color:var(--muted);
+      font-size:13px;
+      user-select:none;
+    }
+    h1{margin:14px 0 6px; font-size:28px; letter-spacing:.2px}
+    p{margin:0 0 16px; color:var(--muted); line-height:1.55}
+    .code{
+      margin:14px 0 18px;
+      background: rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:16px;
+      padding:14px 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size:13px;
+      overflow:auto;
+    }
+    .code .k{color:#7cdeff}
+    .code .s{color:#ffd479}
+    .code .c{color:#7e88b7}
+    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+    button{
+      border:0; cursor:pointer;
+      padding:12px 16px;
+      border-radius:14px;
+      font-weight:700;
+      color:white;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      box-shadow: 0 10px 25px rgba(255,77,141,.22);
+      transition: transform .08s ease, filter .15s ease;
+    }
+    button:hover{filter:brightness(1.05)}
+    button:active{transform:translateY(1px) scale(.99)}
+    .ghost{
+      background: transparent;
+      border:1px solid rgba(255,255,255,.16);
+      color: var(--text);
+      box-shadow:none;
+      font-weight:600;
+    }
+    .status{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(18,26,51,.45);
+      color:var(--text);
+    }
+    .small{font-size:12px; color:var(--muted)}
+    .confetti{
+      position:absolute; inset:0; pointer-events:none;
+      overflow:hidden; border-radius:22px;
+    }
+    .piece{
+      position:absolute; width:10px; height:14px;
+      opacity:.95; top:-20px;
+      animation: fall 1.9s linear forwards;
+      border-radius:3px;
+    }
+    @keyframes fall{
+      to{ transform: translateY(820px) rotate(520deg); opacity:1; }
+    }
+    .heart{
+      position:fixed; pointer-events:none;
+      font-size:18px; opacity:.8;
+      animation: float 1.6s ease-out forwards;
+    }
+    @keyframes float{
+      from{ transform: translateY(0) scale(.9); }
+      to{ transform: translateY(-140px) scale(1.15); opacity:0; }
+    }
+    a{color:#b9c1ff}
+  </style>
+</head>
+
+<body>
+  <main class="card" id="card">
+    <div class="confetti" id="confetti"></div>
+
+    <span class="tag">🧑‍💻 <b>build</b> : valentín-cena@v1.1</span>
+
+    <h1 id="title">Tengo un PR para tu corazón 💘</h1>
+    <p id="subtitle">
+      Hola <b>mi amor</b>… hice este “programita” solo para invitarte a una
+      <b>cena romántica</b> este 14 de febrero 💖
+    </p>
+
+    <div class="code" aria-label="código bonito">
+      <div><span class="c">// 14 de febrero</span></div>
+      <div><span class="k">const</span> pregunta = <span class="s">"¿Quieres ser mi San Valentín?"</span>;</div>
+      <div><span class="k">const</span> razon = <span class="s">"Porque contigo todo compila mejor 💞"</span>;</div>
+      <div><span class="k">const</span> plan = <span class="s">"Cena romántica 🍽️ + abrazos + tú y yo"</span>;</div>
+      <div><span class="c">// click para ejecutar</span></div>
+    </div>
+
+    <div class="row">
+      <button id="btnYes">✅ Aceptar (run)</button>
+      <button id="btnNo" class="ghost">🙈 Rechazar (throw)</button>
+      <span class="small" id="countdown"></span>
+    </div>
+
+    <div class="status" id="status" role="status" aria-live="polite">
+      Estado: esperando tu respuesta… ⏳
+    </div>
+
+    <p class="small" style="margin-top:12px">
+      Tip: si quieres, edita el texto dentro del archivo (busca “mi amor” o “plan”).
+    </p>
+  </main>
+
+  <script>
+    const title = document.getElementById("title");
+    const subtitle = document.getElementById("subtitle");
+    const status = document.getElementById("status");
+    const confettiBox = document.getElementById("confetti");
+    const btnYes = document.getElementById("btnYes");
+    const btnNo = document.getElementById("btnNo");
+    const countdownEl = document.getElementById("countdown");
+
+    // Contador al 14 de febrero (año actual)
+    function updateCountdown(){
+      const now = new Date();
+      const year = now.getFullYear();
+      const target = new Date(year, 1, 14, 0, 0, 0); // Febrero = 1
+      if (now > target) target.setFullYear(year + 1);
+
+      const diff = target - now;
+      const d = Math.floor(diff / (1000*60*60*24));
+      const h = Math.floor((diff / (1000*60*60)) % 24);
+      const m = Math.floor((diff / (1000*60)) % 60);
+
+      countdownEl.textContent = `⏰ Deploy en: ${d}d ${h}h ${m}m`;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 15000);
+
+    function popHeart(x, y){
+      const el = document.createElement("div");
+      el.className = "heart";
+      el.textContent = Math.random() > 0.5 ? "💖" : "💘";
+      el.style.left = (x + (Math.random()*18 - 9)) + "px";
+      el.style.top  = (y + (Math.random()*10 - 5)) + "px";
+      document.body.appendChild(el);
+      setTimeout(()=> el.remove(), 1600);
+    }
+
+    function confettiBurst(){
+      const colors = ["#ff4d8d","#7c5cff","#ffd479","#7cdeff","#7dffb0","#ffffff"];
+      for(let i=0;i<90;i++){
+        const p = document.createElement("div");
+        p.className = "piece";
+        p.style.left = Math.random()*100 + "%";
+        p.style.background = colors[Math.floor(Math.random()*colors.length)];
+        p.style.transform = `rotate(${Math.random()*180}deg)`;
+        p.style.animationDuration = (1.4 + Math.random()*1.2) + "s";
+        confettiBox.appendChild(p);
+        setTimeout(()=> p.remove(), 2400);
+      }
+    }
+
+    btnYes.addEventListener("click", (e)=>{
+      const rect = e.target.getBoundingClientRect();
+      for(let i=0;i<18;i++) popHeart(rect.left + rect.width/2, rect.top);
+      confettiBurst();
+
+      title.textContent = "✅ Merge aprobado: tú + yo 💞";
+      subtitle.innerHTML = "Prometo ser tu <b>bugfix</b> en días difíciles y tu <b>feature</b> favorita en los buenos.";
+      status.innerHTML =
+        "Respuesta: <b>SÍ</b> 🎉<br>" +
+        "Estado: cena en producción — <b>reservación pendiente</b> 🍽️💖";
+      btnYes.disabled = true;
+
+      btnNo.textContent = "😌 ok ok (ya dijiste que sí)";
+      btnNo.disabled = true;
+    });
+
+    // Botón “No” juguetón: huye
+    btnNo.addEventListener("mouseenter", ()=>{
+      const pad = 14;
+      const card = document.getElementById("card").getBoundingClientRect();
+      const bw = btnNo.offsetWidth, bh = btnNo.offsetHeight;
+
+      const x = Math.random() * (card.width - bw - pad*2) + pad;
+      const y = Math.random() * (card.height - bh - pad*2) + pad;
+
+      btnNo.style.position = "absolute";
+      btnNo.style.left = x + "px";
+      btnNo.style.top  = y + "px";
+
+      status.textContent = "throw new Error('No aceptado 😅'); // intenta otra vez";
+    });
+
+    document.getElementById("card").addEventListener("click", (e)=>{
+      if (e.target.tagName.toLowerCase() === "button") return;
+      popHeart(e.clientX, e.clientY);
+    });
+  </script>
+</body>
+</html>
