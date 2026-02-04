@@ -126,17 +126,31 @@
       border-radius:22px;
     }
 
+    /* CONFETI MEJORADO */
     .piece{
       position:absolute;
-      width:10px;
+      width:8px;
       height:14px;
       top:-20px;
-      animation: fall 2s linear forwards;
+      animation: fall 2.2s linear forwards;
       border-radius:3px;
+      opacity:.9;
+    }
+
+    .piece.circle{
+      width:8px;
+      height:8px;
+      border-radius:50%;
     }
 
     @keyframes fall{
-      to{ transform: translateY(900px) rotate(520deg); }
+      to{
+        transform:
+          translateY(900px)
+          translateX(var(--x))
+          rotate(720deg);
+        opacity:0;
+      }
     }
 
     .heart{
@@ -183,7 +197,6 @@
       Estado: esperando tu respuesta… ⏳
     </div>
 
-    <!-- CAMBIO ROMÁNTICO -->
     <p class="small">
       Hecho con amor, solo para ti 💖
     </p>
@@ -221,20 +234,28 @@
       setTimeout(()=>h.remove(),1600);
     }
 
-    function confetti(){
-      const colors=["#ff4d8d","#7c5cff","#ffd479","#7cdeff","#7dffb0","#fff"];
-      for(let i=0;i<90;i++){
-        const p=document.createElement("div");
-        p.className="piece";
-        p.style.left=Math.random()*100+"%";
-        p.style.background=colors[Math.floor(Math.random()*colors.length)];
+    /* CONFETI DESDE EL BOTÓN */
+    function confettiFrom(element){
+      const rect = element.getBoundingClientRect();
+      const colors = ["#ff4d8d","#7c5cff","#ffd479","#7cdeff","#7dffb0","#fff"];
+
+      for(let i=0;i<120;i++){
+        const p = document.createElement("div");
+        p.className = "piece" + (Math.random() > 0.6 ? " circle" : "");
+        p.style.left = (rect.left + rect.width/2) + "px";
+        p.style.top  = (rect.top + rect.height/2) + "px";
+        p.style.background = colors[Math.floor(Math.random()*colors.length)];
+
+        // desplazamiento lateral aleatorio
+        p.style.setProperty("--x", (Math.random()*400 - 200) + "px");
+
         confettiBox.appendChild(p);
-        setTimeout(()=>p.remove(),2200);
+        setTimeout(()=>p.remove(),2300);
       }
     }
 
     btnYes.onclick = (e)=>{
-      confetti();
+      confettiFrom(btnYes);
       title.textContent="✅ Merge aprobado: tú + yo 💞";
       subtitle.innerHTML="Prometo ser tu <b>bugfix</b> en días difíciles y tu <b>feature</b> favorita en los buenos.";
       status.innerHTML="Respuesta: <b>SÍ</b> 🎉<br>Estado: cena en producción 🍽️💖";
